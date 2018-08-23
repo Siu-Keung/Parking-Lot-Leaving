@@ -21,6 +21,8 @@ public class LeavingService {
     }
 
     public void createLeavingRequest(Leaving leaving){
+        leaving.setStatus(PENDING);
+        leaving.setTerminated(false);
         this.leavingRepository.save(leaving);
     }
 
