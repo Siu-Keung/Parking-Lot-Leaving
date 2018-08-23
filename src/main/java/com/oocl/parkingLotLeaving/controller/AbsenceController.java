@@ -34,5 +34,10 @@ public class AbsenceController {
         return resultMap;
     }
 
+    @GetMapping("/{id}")
+    public Leaving getLeavingRequestById(@PathVariable Long id){
+        return this.leavingService.findLeavingRequestById(id);
+    }
+
 
 }

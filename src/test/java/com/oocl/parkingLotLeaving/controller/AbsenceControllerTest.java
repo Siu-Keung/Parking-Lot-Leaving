@@ -1,8 +1,10 @@
 package com.oocl.parkingLotLeaving.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.oocl.parkingLotLeaving.entity.Leaving;
 import com.oocl.parkingLotLeaving.exception.IllegalArgumentsException;
+import com.oocl.parkingLotLeaving.exception.ResourceNotFoundException;
 import com.oocl.parkingLotLeaving.service.LeavingService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,12 +14,15 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -72,9 +77,34 @@ public class AbsenceControllerTest {
 
     @Test
     public void should_return_leaving_request_list() throws Exception {
-        List<Leaving> list = new ArrayList<>();
+        Map expectedMap = new HashMap();
+        List list = new ArrayList();
+        expectedMap.put("datas", list);
         when(this.leavingService.findAllLeavingRequest()).thenReturn(list);
-        mockMvc.perform(get("/absence")).andExpect(content().string(mapper.writeValueAsString(list)));
+        mockMvc.perform(get("/absence")).andExpect(content().string(mapper.writeValueAsString(expectedMap)));
+    }
+
+    @Test
+    public void should_return_specific_leaving_request_given_valid_id() throws Exception {
+        Leaving leaving = new Leaving();
+        leaving.setStartDate(format.parse("2018-08-24 16:00"));
+        leaving.setEndDate(format.parse("2018-08-25 08:00"));
+        leaving.setReason("去相亲");
+
+        when(this.leavingService.findLeavingRequestById(anyLong())).thenReturn(leaving);
+
+        mockMvc.perform(get("/absence/" + anyLong()))
+                .andExpect(status().isOk())
+                .andExpect(content().string(mapper.writeValueAsString(leaving)));
+    }
+
+    @Test
+    public void should_return_404_given_invalid_id() throws Exception {
+        doThrow(new ResourceNotFoundException()).when(this.leavingService).findLeavingRequestById(anyLong());
+
+        mockMvc.perform(get("/absence/" + anyLong()))
+                .andExpect(status().isNotFound())
+                .andExpect(content().string("资源不存在"));
     }
 
 }
