@@ -22,7 +22,7 @@ public class AbsenceController {
     @PostMapping
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void createLeavingRequest(LeavingRequest leavingRequest){
-
+        this.leavingService.createLeavingRequest(leavingRequest);
     }
 
 }

@@ -14,9 +14,12 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+
 import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.mockito.Mockito.verify;
 
 /**
  * @author Dylan Wei
@@ -41,8 +44,9 @@ public class AbsenceControllerTest {
         leaving.setStartDate(format.parse("2018-08-23 16:00"));
         leaving.setEndDate(format.parse("2018-08-25 08:00"));
         leaving.setReason("去相亲");
+
         mockMvc.perform(post("/absence").content(mapper.writeValueAsString(leaving)))
                 .andExpect(status().isNoContent());
-
+        verify(this.leavingService).createLeavingRequest(any(LeavingRequest.class));
     }
 }
