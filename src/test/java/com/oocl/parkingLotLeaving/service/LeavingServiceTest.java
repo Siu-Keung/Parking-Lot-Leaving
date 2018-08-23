@@ -2,6 +2,7 @@ package com.oocl.parkingLotLeaving.service;
 
 import com.oocl.parkingLotLeaving.entity.Leaving;
 import com.oocl.parkingLotLeaving.exception.IllegalArgumentsException;
+import com.oocl.parkingLotLeaving.exception.ResourceNotFoundException;
 import com.oocl.parkingLotLeaving.repostitory.LeavingRepository;
 import org.junit.Before;
 import org.junit.Rule;
@@ -12,14 +13,15 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.logging.Level;
 
 import static com.oocl.parkingLotLeaving.entity.LeavingRequestStatus.PENDING;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.*;
 
 /**
  * @author Dylan Wei
@@ -86,5 +88,27 @@ public class LeavingServiceTest {
         assertThat(this.leavingService.findAllLeavingRequest(),is(leavingRequestList));
     }
 
+    @Test
+    public void should_get_specific_leaving_request_given_valid_id() throws ParseException {
+        Leaving leaving = new Leaving();
+        leaving.setId(1L);
+        leaving.setStartDate(format.parse("2018-08-24 16:00"));
+        leaving.setEndDate(format.parse("2018-08-25 08:00"));
+        leaving.setReason("去相亲");
+        Optional<Leaving> expectedOptional = Optional.of(leaving);
+        when(this.leavingRepository.findById(anyLong())).thenReturn(expectedOptional);
+
+        assertThat(this.leavingService.findLeavingRequestById(anyLong()), is(leaving));
+    }
+
+    @Test
+    public void should_throw_ResourceNotFoundException_given_invalid_id(){
+        Optional<Leaving> optional = Optional.empty();
+        when(this.leavingRepository.findById(anyLong())).thenReturn(optional);
+
+        expectedException.expect(ResourceNotFoundException.class);
+        expectedException.expectMessage("资源不存在");
+        this.leavingService.findLeavingRequestById(anyLong());
+    }
 
 }
