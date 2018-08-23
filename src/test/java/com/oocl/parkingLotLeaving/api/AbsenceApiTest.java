@@ -1,8 +1,10 @@
 package com.oocl.parkingLotLeaving.api;
 
 import com.oocl.parkingLotLeaving.entity.Leaving;
+import com.oocl.parkingLotLeaving.entity.LeavingRequestStatus;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.http.ContentType;
+import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.BeforeAll;
@@ -10,9 +12,15 @@ import org.junit.jupiter.api.Test;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import static io.restassured.RestAssured.given;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static io.restassured.RestAssured.*;
+import static io.restassured.path.json.JsonPath.from;
 import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+import static org.mockito.ArgumentMatchers.anyLong;
 
 /**
  * @author Dylan Wei
@@ -70,5 +78,22 @@ public class AbsenceApiTest {
                 .then().statusCode(HttpStatus.SC_FORBIDDEN);
     }
 
+    @Test
+    public void should_get_leaving_request_details_given_valid_id(){
+        Leaving leaving = with().spec(requestSpec).get("/1").as(Leaving.class);
+
+        assertThat(leaving.getId(), is(1L));
+        assertThat(leaving.getReason(), is("生病了"));
+        assertThat(leaving.getStatus(), is(LeavingRequestStatus.PENDING));
+    }
+
+    @Test
+    public void should_get_404_given_invalid_id(){
+        given().spec(requestSpec)
+                .when().get("/9999999999")
+                .then().statusCode(HttpStatus.SC_NOT_FOUND)
+                .and()
+                .body(is("资源不存在"));
+    }
 
 }
