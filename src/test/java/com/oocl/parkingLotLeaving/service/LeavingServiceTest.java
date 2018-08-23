@@ -1,10 +1,12 @@
 package com.oocl.parkingLotLeaving.service;
 
 import com.oocl.parkingLotLeaving.entity.Leaving;
+import com.oocl.parkingLotLeaving.exception.IllegalArgumentsException;
 import com.oocl.parkingLotLeaving.repostitory.LeavingRepository;
-import com.oocl.parkingLotLeaving.service.LeavingService;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -24,6 +26,9 @@ public class LeavingServiceTest {
     private LeavingRepository leavingRepository;
     private final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
     private LeavingService leavingService;
+
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
 
     @Before
     public void init(){
@@ -56,6 +61,18 @@ public class LeavingServiceTest {
         //then
         assertThat(leaving.getStatus(),is(PENDING));
         assertThat(leaving.getTerminated(),is(false));
+    }
+
+    @Test
+    public void should_throw_IllegalArgumentsException_given_illegal_date_region() throws ParseException {
+        //given
+        Leaving leaving = new Leaving();
+        leaving.setStartDate(format.parse("2018-08-26 16:00"));
+        leaving.setEndDate(format.parse("2018-08-25 08:00"));
+        leaving.setReason("去相亲");
+
+        expectedException.expect(IllegalArgumentsException.class);
+        this.leavingService.createLeavingRequest(leaving);
     }
 
 
