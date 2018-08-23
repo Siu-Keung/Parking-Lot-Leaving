@@ -23,7 +23,7 @@ public class LeavingService {
 
     public void createLeavingRequest(LeavingRequest leaving){
         if(leaving.getStartDate().after(leaving.getEndDate()))
-            throw new IllegalArgumentsException();
+            throw new IllegalArgumentsException("起始日期不能大于终止日期");
         leaving.setStatus(PENDING);
         leaving.setTerminated(false);
         this.leavingRepository.save(leaving);
