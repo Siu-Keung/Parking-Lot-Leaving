@@ -1,10 +1,12 @@
 package com.oocl.parkingLotLeaving.service;
 
-import com.oocl.parkingLotLeaving.entity.LeavingRequest;
+import com.oocl.parkingLotLeaving.entity.Leaving;
 import com.oocl.parkingLotLeaving.exception.IllegalArgumentsException;
 import com.oocl.parkingLotLeaving.repostitory.LeavingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 import static com.oocl.parkingLotLeaving.entity.LeavingRequestStatus.PENDING;
 
@@ -21,7 +23,7 @@ public class LeavingService {
         this.leavingRepository = leavingRepository;
     }
 
-    public void createLeavingRequest(LeavingRequest leaving){
+    public void createLeavingRequest(Leaving leaving){
         if(leaving.getStartDate().after(leaving.getEndDate()))
             throw new IllegalArgumentsException("起始日期不能大于终止日期");
         leaving.setStatus(PENDING);
@@ -29,4 +31,7 @@ public class LeavingService {
         this.leavingRepository.save(leaving);
     }
 
+    public List<Leaving> findAllLeavingRequest(){
+        return this.leavingRepository.findAll();
+    }
 }

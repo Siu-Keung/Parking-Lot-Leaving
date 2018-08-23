@@ -1,18 +1,18 @@
 package com.oocl.parkingLotLeaving.api;
 
-import com.oocl.parkingLotLeaving.entity.LeavingRequest;
-import io.restassured.RestAssured;
+import com.oocl.parkingLotLeaving.entity.Leaving;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.http.ContentType;
-import io.restassured.mapper.ObjectMapper;
 import io.restassured.specification.RequestSpecification;
 import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import static io.restassured.RestAssured.given;
+import static org.hamcrest.CoreMatchers.hasItems;
+import static org.hamcrest.CoreMatchers.is;
 
 /**
  * @author Dylan Wei
@@ -33,8 +33,20 @@ public class AbsenceApiTest {
     }
 
     @Test
+    public void should_return_list_given_find_all_leaving_request(){
+        given()
+                .spec(requestSpec)
+                .when().get()
+                .then().statusCode(HttpStatus.SC_OK)
+                .and()
+                .body("datas.size", is(3))
+                .body("datas.collect {it.id}", hasItems(1, 2, 3));
+
+    }
+
+    @Test
     public void should_get_204_given_valid_leaving_request() throws ParseException {
-        LeavingRequest leaving = new LeavingRequest();
+        Leaving leaving = new Leaving();
         leaving.setStartDate(format.parse("2018-08-24 16:00"));
         leaving.setEndDate(format.parse("2018-08-25 08:00"));
         leaving.setReason("去相亲");
@@ -47,7 +59,7 @@ public class AbsenceApiTest {
 
     @Test
     public void should_get_403_given_invalid_leaving_request() throws ParseException {
-        LeavingRequest leaving = new LeavingRequest();
+        Leaving leaving = new Leaving();
         leaving.setStartDate(format.parse("2018-08-28 16:00"));
         leaving.setEndDate(format.parse("2018-08-25 08:00"));
         leaving.setReason("去相亲");
@@ -57,5 +69,6 @@ public class AbsenceApiTest {
                 .when().post()
                 .then().statusCode(HttpStatus.SC_FORBIDDEN);
     }
+
 
 }
