@@ -18,5 +18,5 @@ reason varchar(300),
 status varchar(10),
 comment varchar(300),
 create_date datetime,
-terminated int
+terminated bool
 );

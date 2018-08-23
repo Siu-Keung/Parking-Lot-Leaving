@@ -15,7 +15,7 @@ public class Leaving {
     private String status;
     private String comment;
     private Date createDate;
-    private Integer terminated;
+    private Boolean terminated;
 
 
     @ManyToOne(fetch = FetchType.EAGER)
@@ -26,11 +26,11 @@ public class Leaving {
         return createDate;
     }
 
-    public Integer getTerminated() {
+    public Boolean getTerminated() {
         return terminated;
     }
 
-    public void setTerminated(Integer terminated) {
+    public void setTerminated(Boolean terminated) {
         this.terminated = terminated;
     }
 
