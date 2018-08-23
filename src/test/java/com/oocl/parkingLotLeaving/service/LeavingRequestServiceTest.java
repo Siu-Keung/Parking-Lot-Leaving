@@ -1,6 +1,6 @@
 package com.oocl.parkingLotLeaving.service;
 
-import com.oocl.parkingLotLeaving.entity.Leaving;
+import com.oocl.parkingLotLeaving.entity.LeavingRequest;
 import com.oocl.parkingLotLeaving.exception.IllegalArgumentsException;
 import com.oocl.parkingLotLeaving.repostitory.LeavingRepository;
 import org.junit.Before;
@@ -22,7 +22,7 @@ import static org.mockito.Mockito.verify;
  * @author Dylan Wei
  * @date 2018-08-23 16:00
  */
-public class LeavingServiceTest {
+public class LeavingRequestServiceTest {
     private LeavingRepository leavingRepository;
     private final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
     private LeavingService leavingService;
@@ -39,20 +39,20 @@ public class LeavingServiceTest {
     @Test
     public void should_add_leaving_request_successfully_given_valid_application() throws ParseException {
         //given
-        Leaving leaving = new Leaving();
+        LeavingRequest leaving = new LeavingRequest();
         leaving.setStartDate(format.parse("2018-08-23 16:00"));
         leaving.setEndDate(format.parse("2018-08-25 08:00"));
         leaving.setReason("去相亲");
         //when
         this.leavingService.createLeavingRequest(leaving);
         //then
-        verify(this.leavingRepository).save(any(Leaving.class));
+        verify(this.leavingRepository).save(any(LeavingRequest.class));
     }
 
     @Test
     public void should_leaving_status_correct_given_valid_application() throws ParseException {
         //given
-        Leaving leaving = new Leaving();
+        LeavingRequest leaving = new LeavingRequest();
         leaving.setStartDate(format.parse("2018-08-23 16:00"));
         leaving.setEndDate(format.parse("2018-08-25 08:00"));
         leaving.setReason("去相亲");
@@ -66,7 +66,7 @@ public class LeavingServiceTest {
     @Test
     public void should_throw_IllegalArgumentsException_given_illegal_date_region() throws ParseException {
         //given
-        Leaving leaving = new Leaving();
+        LeavingRequest leaving = new LeavingRequest();
         leaving.setStartDate(format.parse("2018-08-26 16:00"));
         leaving.setEndDate(format.parse("2018-08-25 08:00"));
         leaving.setReason("去相亲");

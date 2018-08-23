@@ -5,7 +5,7 @@ import java.util.Date;
 
 
 @Entity
-public class Leaving {
+public class LeavingRequest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
