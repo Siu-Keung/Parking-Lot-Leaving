@@ -1,6 +1,5 @@
 package com.oocl.parkingLotLeaving.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.oocl.parkingLotLeaving.entity.Leaving;
 import com.oocl.parkingLotLeaving.exception.IllegalArgumentsException;
@@ -14,7 +13,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import java.text.ParseException;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,8 +35,8 @@ import static org.mockito.Mockito.verify;
  * @date 2018-08-23 17:21
  */
 @RunWith(SpringRunner.class)
-@WebMvcTest(AbsenceController.class)
-public class AbsenceControllerTest {
+@WebMvcTest(LeavingController.class)
+public class LeavingControllerTest {
     @MockBean
     private LeavingService leavingService;
     @Autowired
@@ -55,7 +54,7 @@ public class AbsenceControllerTest {
         leaving.setEndDate(format.parse("2018-08-25 08:00"));
         leaving.setReason("去相亲");
 
-        mockMvc.perform(post("/absence").content(mapper.writeValueAsString(leaving))
+        mockMvc.perform(post("/leaving").content(mapper.writeValueAsString(leaving))
                 .contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isNoContent());
         verify(this.leavingService).createLeavingRequest(any(Leaving.class));
@@ -69,7 +68,7 @@ public class AbsenceControllerTest {
         leaving.setReason("去相亲");
 
         doThrow(new IllegalArgumentsException("起始日期不能大于终止日期")).when(this.leavingService).createLeavingRequest(any());
-        mockMvc.perform(post("/absence")
+        mockMvc.perform(post("/leaving")
                 .content(mapper.writeValueAsString(leaving)).contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isForbidden())
                 .andExpect(content().string("起始日期不能大于终止日期"));
@@ -81,7 +80,7 @@ public class AbsenceControllerTest {
         List list = new ArrayList();
         expectedMap.put("datas", list);
         when(this.leavingService.findAllLeavingRequest()).thenReturn(list);
-        mockMvc.perform(get("/absence")).andExpect(content().string(mapper.writeValueAsString(expectedMap)));
+        mockMvc.perform(get("/leaving")).andExpect(content().string(mapper.writeValueAsString(expectedMap)));
     }
 
     @Test
@@ -93,7 +92,7 @@ public class AbsenceControllerTest {
 
         when(this.leavingService.findLeavingRequestById(anyLong())).thenReturn(leaving);
 
-        mockMvc.perform(get("/absence/" + anyLong()))
+        mockMvc.perform(get("/leaving/" + anyLong()))
                 .andExpect(status().isOk())
                 .andExpect(content().string(mapper.writeValueAsString(leaving)));
     }
@@ -102,7 +101,7 @@ public class AbsenceControllerTest {
     public void should_return_404_given_invalid_id() throws Exception {
         doThrow(new ResourceNotFoundException()).when(this.leavingService).findLeavingRequestById(anyLong());
 
-        mockMvc.perform(get("/absence/" + anyLong()))
+        mockMvc.perform(get("/leaving/" + anyLong()))
                 .andExpect(status().isNotFound())
                 .andExpect(content().string("资源不存在"));
     }

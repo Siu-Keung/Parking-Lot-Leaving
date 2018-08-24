@@ -5,7 +5,6 @@ import com.oocl.parkingLotLeaving.service.LeavingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,8 +14,8 @@ import java.util.Map;
  * @date 2018-08-23 17:15
  */
 @RestController
-@RequestMapping("/absence")
-public class AbsenceController {
+@RequestMapping("/leaving")
+public class LeavingController {
     @Autowired
     private LeavingService leavingService;
 

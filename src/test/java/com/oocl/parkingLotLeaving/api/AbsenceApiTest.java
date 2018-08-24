@@ -9,12 +9,10 @@ import io.restassured.specification.RequestSpecification;
 import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import static io.restassured.RestAssured.*;
 import static io.restassured.path.json.JsonPath.from;
 import static org.hamcrest.CoreMatchers.hasItems;
@@ -35,13 +33,13 @@ public class AbsenceApiTest {
         requestSpec = new RequestSpecBuilder().
                 setBaseUri("http://127.0.0.1").
                 setPort(1234).
-                setBasePath("/absence").
+                setBasePath("/leaving").
                 setContentType(ContentType.JSON).
                 build();
     }
 
     @Test
-    public void should_return_list_given_find_all_leaving_request(){
+    public void should_return_list_given_find_all_leaving_request() {
         given()
                 .spec(requestSpec)
                 .when().get()
@@ -49,7 +47,6 @@ public class AbsenceApiTest {
                 .and()
                 .body("datas.size", is(3))
                 .body("datas.collect {it.id}", hasItems(1, 2, 3));
-
     }
 
     @Test
@@ -79,7 +76,7 @@ public class AbsenceApiTest {
     }
 
     @Test
-    public void should_get_leaving_request_details_given_valid_id(){
+    public void should_get_leaving_request_details_given_valid_id() {
         Leaving leaving = with().spec(requestSpec).get("/1").as(Leaving.class);
 
         assertThat(leaving.getId(), is(1L));
@@ -88,7 +85,7 @@ public class AbsenceApiTest {
     }
 
     @Test
-    public void should_get_404_given_invalid_id(){
+    public void should_get_404_given_invalid_id() {
         given().spec(requestSpec)
                 .when().get("/9999999999")
                 .then().statusCode(HttpStatus.SC_NOT_FOUND)
